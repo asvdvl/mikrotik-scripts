@@ -1,0 +1,10 @@
+[Unit]
+Description=Run OSPF check every 10 minutes
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=10min
+Unit=ospf-latensy-cost-autocalc.service
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,5 @@
+[Unit]
+Description=Monitor OSPF neighbors and adjust cost
+
+[Service]
+ExecStart=%h/ospf-latensy-cost-autocalc.py
