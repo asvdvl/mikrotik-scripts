@@ -68,17 +68,22 @@ for neikey in neirbors:
     success = [r if r is not False else reg_loss() for r in responses]
     avg = get_avg(success) * 1000
 
-    if iface in overrides and 'multiplier' in overrides[iface]:
-        newCost = int(avg * overrides[iface]["multiplier"])
-    else:
-        newCost = int(avg * costMultiplier)
+    newCost = int(avg * costMultiplier)
+    currdeadband = deadband
+
+    if iface in overrides:
+        if 'multiplier' in overrides[iface]:
+            newCost = int(avg * overrides[iface]["multiplier"])
+
+        if 'deadband' in overrides[iface]:
+            currdeadband = overrides[iface]["deadband"]
 
     ifaceObj = run_vtysh_json('show ip ospf interface')["interfaces"][iface]
     currCost = ifaceObj["cost"]
     print(f"new cost {newCost}, current:{currCost}, avg {avg:.2f}, loss:{loss}")
 
     diff = abs(currCost - newCost)
-    if (diff > deadband):
+    if (diff > currdeadband):
         run_vtysh_command(["configure terminal",
             "-c", f"interface {iface}",
             "-c", f"ip ospf cost {newCost}",
@@ -87,6 +92,6 @@ for neikey in neirbors:
         ])
         print("update cost")
     else:
-        print(f"value in range of deadband. diff from calculated: {diff}. in +- of {deadband}")
+        print(f"value in range of deadband. diff from calculated: {diff}. in +- of {currdeadband}")
 
     print()
