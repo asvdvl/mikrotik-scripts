@@ -14,7 +14,7 @@ overrides = {
     "wg-ar1": {"multiplier": 5, "deadband": 25},
 }
 
-deadband = 10
+deadband = 10 #in percent
 costMultiplier = 2
 timeout = 0.5
 alsoUpdateIPv6OnSameIface = True
@@ -80,6 +80,7 @@ for neikey in neirbors:
 
     ifaceObj = run_vtysh_json('show ip ospf interface')["interfaces"][iface]
     currCost = ifaceObj["cost"]
+    currdeadband = int(currCost*(currdeadband/100))
     print(f"new cost {newCost}, current:{currCost}, avg {avg:.2f}, loss:{loss}")
 
     diff = abs(currCost - newCost)
